@@ -14,7 +14,7 @@ module "ec2" {
 # module "s3" {
 #   source  = "clouddrove/s3/aws"
 #   version = "2.0.0"
-# }
+# #}
 resource "aws_s3_bucket" "bucket" {
   bucket = "my-unique-bucket-name-harish-terraform"
 }
