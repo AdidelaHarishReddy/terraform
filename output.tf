@@ -6,3 +6,11 @@
 #     value = module.s3.bucket_id
 #     description = "The name of the S3 bucket"
 # }
+output "public_ips" {
+  description = "The public IP addresses of the EC2 instances"
+  value       = module.master_vm[*].public_ips
+}
+output "worker_public_ips" {
+  description = "The public IP addresses of the worker EC2 instances"
+  value       = module.worker_vm[*].public_ips
+}
