@@ -46,6 +46,6 @@ variable "ami" {
 variable "key_name" {
     description = "The name of the key pair to use for the EC2 instances"
     type        = string
-    default     = "venu2"  # Replace with your actual key name
+    default     = "mahesh1"  # Replace with your actual key name
 }
 

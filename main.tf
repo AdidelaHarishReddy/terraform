@@ -24,8 +24,8 @@ module "master_vm" {
   # Example variables, replace with your actual variable names and values
 instance_type        = var.m_instance_type
   count               = var.m_node_count
-  region              = var.region  
-  key_name             = "venu2"  
+  region              = var.region
+  key_name             = var.key_name
   # vpc_id             = var.vpc_id        # Uncomment if using VPC ID
   # subnet_ids         = var.subnet_ids    # Uncomment if using subnet IDs
   tags                = var.m_tags
@@ -46,7 +46,7 @@ resource "null_resource" "master_provision" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("C:/Users/anand/Downloads/venu2.pem")
+    private_key = file("C:/Users/anand/Downloads/${var.key_name}")
     host        = module.master_vm[count.index].public_ips[0]
 
   }
@@ -69,8 +69,8 @@ module "worker_vm" {
   # Example variables, replace with your actual variable names and values
 instance_type        = var.instance_type
   count               = var.node_count
-  region              = var.region  
-  key_name             = "venu2"  
+  region              = var.region
+  key_name             = var.key_name
   # vpc_id             = var.vpc_id        # Uncomment if using VPC ID
   # subnet_ids         = var.subnet_ids    # Uncomment if using subnet IDs
   tags                = var.tags
@@ -84,7 +84,7 @@ resource "null_resource" "worker_provision" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("C:/Users/anand/Downloads/venu2.pem")
+    private_key = file("C:/Users/anand/Downloads/${var.key_name}")
     host        = module.worker_vm[count.index].public_ips[0]
   }
   provisioner "local-exec" {
