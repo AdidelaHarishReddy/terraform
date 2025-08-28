@@ -46,7 +46,7 @@ resource "null_resource" "master_provision" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("C:/Users/anand/Downloads/${var.key_name}")
+   private_key = file("C:\\Users\\anand\\Downloads\\${var.key_name}")
     host        = module.master_vm[count.index].public_ips[0]
 
   }
@@ -59,7 +59,7 @@ resource "null_resource" "master_provision" {
     ]
   }
   provisioner "local-exec" {
-    command = "scp -i C:/Users/anand/Downloads/venu2.pem -o StrictHostKeyChecking=no ubuntu@${module.master_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh ./join_command.sh"
+    command = "scp -i C:/Users/anand/Downloads/${var.key_name} -o StrictHostKeyChecking=no ubuntu@${module.master_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh ./join_command.sh"
 }
 }
 
@@ -84,11 +84,11 @@ resource "null_resource" "worker_provision" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("C:/Users/anand/Downloads/${var.key_name}")
+    private_key = file("C:\\Users\\anand\\Downloads\\${var.key_name}")
     host        = module.worker_vm[count.index].public_ips[0]
   }
   provisioner "local-exec" {
-    command = "scp ./join_command.sh -i C:/Users/anand/Downloads/venu2.pem -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
+    command = "scp ./join_command.sh -i C:/Users/anand/Downloads/${var.key_name} -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
 }
 
   provisioner "remote-exec" {
