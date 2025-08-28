@@ -46,20 +46,23 @@ resource "null_resource" "master_provision" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-   private_key = file("C:\\Users\\anand\\Downloads\\${var.key_name}")
+    private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
     host        = module.master_vm[count.index].public_ips[0]
 
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt update",
-      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker | bash -s master",
-      " kubeadm token create --print-join-command > /home/ubuntu/join_command.sh"
+      "sudo apt update || echo \"apt update failed\"",
+      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker | bash -s master | tee -a /home/ubuntu/master-log.txt",
+      "sleep 10",
+      "sudo kubeadm token create --print-join-command > /home/ubuntu/join_command.sh || echo \"Failed to create join command\"",
+      "cat /home/ubuntu/join_command.sh | tee -a /home/ubuntu/log.txt"
+
     ]
   }
   provisioner "local-exec" {
-    command = "scp -i C:/Users/anand/Downloads/${var.key_name} -o StrictHostKeyChecking=no ubuntu@${module.master_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh ./join_command.sh"
+    command = "scp -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.master_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh ./join_command.sh"
 }
 }
 
@@ -79,16 +82,17 @@ instance_type        = var.instance_type
 }
 
 resource "null_resource" "worker_provision" {
+  depends_on = [ null_resource.master_provision ]
   count = var.node_count
 
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("C:\\Users\\anand\\Downloads\\${var.key_name}")
+    private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
     host        = module.worker_vm[count.index].public_ips[0]
   }
   provisioner "local-exec" {
-    command = "scp ./join_command.sh -i C:/Users/anand/Downloads/${var.key_name} -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
+    command = "scp ./join_command.sh -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
 }
 
   provisioner "remote-exec" {

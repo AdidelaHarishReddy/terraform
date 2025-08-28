@@ -12,7 +12,7 @@ variable "region" {
 variable "node_count" {
     description = "Number of nodes in the Kubernetes cluster"
     type        = number
-    default     = 2
+    default     = 1
 }
 
 variable "m_node_count" {
