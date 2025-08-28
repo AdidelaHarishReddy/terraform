@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "bucket" {
-  bucket = "my-unique-bucket-name-harish-terraform"
+  bucket = "my-unique-bucket-name-harish-terraform1212"
 }
 resource "aws_s3_bucket_versioning" "bucket_versioning" {
   bucket = aws_s3_bucket.bucket.id

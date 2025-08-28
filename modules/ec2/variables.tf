@@ -18,7 +18,7 @@ variable "node_count" {
 variable "instance_type" {
     description = "Instance type for the cluster nodes"
     type        = string
-    default     = "t2.micro"
+    default     = "t3.micro"
 }
 
 # variable "vpc_id" {
