@@ -54,7 +54,7 @@ resource "null_resource" "master_provision" {
   provisioner "remote-exec" {
     inline = [
       "sudo apt update || echo \"apt update failed\"",
-      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker | bash -s master | tee -a /home/ubuntu/master-log.txt",
+      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s master | tee -a /home/ubuntu/master-log.txt",
       "sleep 10",
       "sudo kubeadm token create --print-join-command > /home/ubuntu/join_command.sh || echo \"Failed to create join command\"",
       "cat /home/ubuntu/join_command.sh | tee -a /home/ubuntu/log.txt"
@@ -82,7 +82,7 @@ instance_type        = var.instance_type
 }
 
 resource "null_resource" "worker_provision" {
-  depends_on = [ null_resource.master_provision ]
+  depends_on = [ null_resource.master_provision, module.worker_vm ]
   count = var.node_count
 
   connection {
@@ -91,15 +91,21 @@ resource "null_resource" "worker_provision" {
     private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
     host        = module.worker_vm[count.index].public_ips[0]
   }
-  provisioner "local-exec" {
-    command = "scp ./join_command.sh -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
+#   provisioner "local-exec" {
+#     command = "sleep 30 ; scp ./join_command.sh -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
+#   }
+
+provisioner "file" {
+  source      = "./join_command.sh"
+  destination = "/home/ubuntu/join_command.sh"
 }
 
   provisioner "remote-exec" {
     inline = [
       "sudo apt update",
-      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker | bash -s worker",
+      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s worker",
       "sudo chmod +x /home/ubuntu/join_command.sh",
+      "sudo su -",
       "sudo bash /home/ubuntu/join_command.sh"
     ]
   }

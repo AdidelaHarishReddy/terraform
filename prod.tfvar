@@ -1,3 +1,4 @@
-variable "instance_type" {
-  default = "c7i-flex.large"
-}
+#master instance type
+m_instance_type = "t3.small"
+# worker instance_type
+instance_type = "t3.micro"
