@@ -1,1 +1,1 @@
-kubeadm join 172.31.42.98:6443 --token i9wccz.sipi6arh5gtt3dpx --discovery-token-ca-cert-hash sha256:ca066407127da2fbd0d5c2a54623496401bbb01c305e846a1cf78677c0d5fab3 
+kubeadm join 172.31.40.86:6443 --token ooptdc.ib5913mt7frhi62x --discovery-token-ca-cert-hash sha256:48cf087a6a9c0b9f356b86a132eea66f89d683bc6972d8f859b48eab7c01310f 

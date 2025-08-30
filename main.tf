@@ -53,8 +53,9 @@ resource "null_resource" "master_provision" {
 
   provisioner "remote-exec" {
     inline = [
+      "set -e",
       "sudo apt update || echo \"apt update failed\"",
-      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s master | tee -a /home/ubuntu/master-log.txt",
+      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s master | tee -a /home/ubuntu/master-log.txt || echo \"Failed to run master setup script\"",
       "sleep 10",
       "sudo kubeadm token create --print-join-command > /home/ubuntu/join_command.sh || echo \"Failed to create join command\"",
       "cat /home/ubuntu/join_command.sh | tee -a /home/ubuntu/log.txt"
@@ -105,7 +106,6 @@ provisioner "file" {
       "sudo apt update",
       "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s worker",
       "sudo chmod +x /home/ubuntu/join_command.sh",
-      "sudo su -",
       "sudo bash /home/ubuntu/join_command.sh"
     ]
   }
