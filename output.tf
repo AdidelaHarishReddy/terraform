@@ -17,5 +17,15 @@ output "worker_public_ips" {
 
 output "nacl_id" {
   description = "ID of the created NACL"
-  value       = module.nacl.id
+  value       = module.nacl.nacl_id
+}
+
+output "vpc_id" {
+  description = "The ID of the VPC"
+  value       = module.vpc.vpc_id
+}
+
+output "vpc_arn" {
+  description = "The ARN of the VPC"
+  value       = module.vpc.vpc_arn
 }

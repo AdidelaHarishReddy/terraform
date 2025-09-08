@@ -51,3 +51,10 @@ variable "key_name" {
     default     = "mahesh1"  # Replace with your actual key name
 }
 
+# Security groups to attach to instances
+variable "security_group_ids" {
+    description = "List of security group IDs to associate with instances"
+    type        = list(string)
+    default     = []
+}
+

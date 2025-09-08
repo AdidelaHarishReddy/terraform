@@ -1,6 +1,5 @@
 resource "aws_network_acl" "nacl" {
   vpc_id = var.vpc_id
-
   dynamic "ingress" {
     for_each = var.ingress_rules
     content {

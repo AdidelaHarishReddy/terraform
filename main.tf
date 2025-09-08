@@ -21,9 +21,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption
 module "vpc" {
   source = "./modules/vpc"
   cidr_block = var.cidr_block
-  tags = {
-       Name = var.vpc_name 
-       }
+  vpc_name  = var.vpc_name
 }
 
 module "IGW" {
@@ -37,27 +35,19 @@ module "pub_route_table" {
   depends_on = [ module.vpc, module.IGW ]
   source = "./modules/route_table"  
   # Example variables, replace with your actual variable names and values
-  vpc_id = module.vpc.vpc_id
-  route {
-        cidr_block = var.pub_subnet_cidr
-        gateway_id = module.IGW.igw_id
-    }
-  tags = {
-    Name = "pub_route_table"
-  }
+  vpc_id          = module.vpc.vpc_id
+  subnet_cidr     = var.pub_subnet_cidr
+  igw_id          = module.IGW.igw_id
+  routetable_name = { Name = "pub_route_table" }
 }
 
 module "pvt_route_table" {
   depends_on = [ module.vpc ]
   source = "./modules/route_table"
-  route {
-        cidr_block = var.pvt_subnet_cidr
-    }
   # Example variables, replace with your actual variable names and values
-  vpc_id = module.vpc.vpc_id
-    tags = {
-  Name = "pvt_route_table"
-  }
+  vpc_id          = module.vpc.vpc_id
+  subnet_cidr     = var.pvt_subnet_cidr
+  routetable_name = { Name = "pvt_route_table" }
 }
 
 # resource "aws_route" "pub_route" {
@@ -90,7 +80,7 @@ module "pvt_subnet" {
   source = "./modules/subnet"
 
   # Example variables, replace with your actual variable names and values
-  vpc_id                  = module.project_vpc.vpc_id # Reference to your existing VPC
+  vpc_id                  = module.vpc.vpc_id # Reference to your existing VPC
   subnet_cidr             = var.pvt_subnet_cidr
   subnet_name             = "private-subnet-1"
   map_public_ip_on_launch = false
@@ -100,18 +90,14 @@ module "pvt_subnet" {
 module "nacl" {
   source        = "./modules/NACL"
   vpc_id        = module.vpc.vpc_id
-  ingress_rules = var.ingress_rules
-  egress_rules  = var.egress_rules
-  tags = {
-    nacl_name = "nacl_80_22_traffic"
-    }
+  nacl_name     = "nacl_80_22_traffic"
 }
 
 # Associate the NACL with the provided subnets
 resource "aws_network_acl_association" "nacl_association" {
   for_each       = toset([module.pvt_subnet.subnet_id, module.pub_subnet.subnet_id])
   subnet_id      = each.value
-  network_acl_id = module.nacl.id
+  network_acl_id = module.nacl.nacl_id
 }
 
 module "SG" {
@@ -120,7 +106,7 @@ module "SG" {
   # Example variables, replace with your actual variable names and values
   vpc_id = module.vpc.vpc_id
   ingress_rules = var.sg_ingress_rules
-  tags          = var.sg_tags
+  sg_tags       = var.sg_tags
 }
 
 module "master_vm" {
@@ -131,9 +117,9 @@ instance_type        = var.m_instance_type
   count               = var.m_node_count
   region              = var.region
   key_name             = var.key_name
-  vpc_id             = [module.vpc.vpc_id]        # Uncomment if using VPC ID
+  vpc_id             = module.vpc.vpc_id        # Uncomment if using VPC ID
   subnet_ids         = [module.pub_subnet.subnet_id]    # Uncomment if using subnet IDs
-  sg_ids             = [module.SG.sg_id]  
+  security_group_ids = [module.SG.sg_id]
   tags                = var.m_tags
   ami                  = "ami-0f918f7e67a3323f0"  # Add other variables as required by your ec2 module
   # tags = {
@@ -184,9 +170,9 @@ instance_type        = var.instance_type
   count               = var.node_count
   region              = var.region
   key_name             = var.key_name
-  vpc_id             = [module.vpc.vpc_id]        # Uncomment if using VPC ID
+  vpc_id             = module.vpc.vpc_id        # Uncomment if using VPC ID
   subnet_ids         = [module.pub_subnet.subnet_id]      # Uncomment if using subnet IDs
-  sg_ids             = [module.SG.sg_id]  
+  security_group_ids = [module.SG.sg_id]
   tags                = var.tags
   ami                  = "ami-0f918f7e67a3323f0"  # Add other variables as required by your ec2 module
 
