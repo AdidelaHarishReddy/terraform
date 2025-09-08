@@ -14,3 +14,8 @@ output "worker_public_ips" {
   description = "The public IP addresses of the worker EC2 instances"
   value       = module.worker_vm[*].public_ips
 }
+
+output "nacl_id" {
+  description = "ID of the created NACL"
+  value       = module.nacl.id
+}

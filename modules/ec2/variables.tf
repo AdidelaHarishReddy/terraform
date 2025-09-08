@@ -21,15 +21,17 @@ variable "instance_type" {
     default     = "t3.micro"
 }
 
-# variable "vpc_id" {
-#     description = "The VPC ID where the cluster will be deployed"
-#     type        = string
-# }
+variable "vpc_id" {
+    description = "The VPC ID where the cluster will be deployed"
+    type        = string
+    default     = ""
+}
 
-# variable "subnet_ids" {
-#     description = "A list of subnet IDs for the cluster"
-#     type        = list(string)
-# }
+variable "subnet_ids" {
+    description = "A list of subnet IDs for the cluster"
+    type        = list(string)
+    default     = []
+}
 
 variable "tags" {
     description = "A list of tags to assign to the cluster resources"
