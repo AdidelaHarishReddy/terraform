@@ -106,7 +106,7 @@ resource "aws_network_acl_association" "nacl_association" {
   network_acl_id = module.nacl.nacl_id
 }
 
-# # Associate the NACL with the provided subnets
+# # Associate the NACL with the provided subnets..
 # resource "aws_network_acl_association" "nacl_association" {
 #   for_each       = toset([module.pvt_subnet.subnet_id, module.pub_subnet.subnet_id])
 #   subnet_id      = each.value
