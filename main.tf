@@ -93,30 +93,17 @@ module "nacl" {
   nacl_name     = "nacl_80_22_traffic"
 }
 
-locals {
-  subnet_map = {
-    "pvt" = module.pvt_subnet.subnet_id
-    "pub" = module.pub_subnet.subnet_id
-  }
-}
-
+# Associate the NACL with the provided subnets
 resource "aws_network_acl_association" "nacl_association" {
-  for_each = local.subnet_map
-  subnet_id     = each.value
+  for_each       = toset([module.pvt_subnet.id, module.pub_subnet.id])
+  subnet_id      = each.value
   network_acl_id = module.nacl.nacl_id
 }
-
-# # Associate the NACL with the provided subnets..
-# resource "aws_network_acl_association" "nacl_association" {
-#   for_each       = toset([module.pvt_subnet.subnet_id, module.pub_subnet.subnet_id])
-#   subnet_id      = each.value
-#   network_acl_id = module.nacl.nacl_id
-# }
 
 module "SG" {
   source = "./modules/sg"
 
-  # Example variables, replace with your actual variable names and values...
+  # Example variables, replace with your actual variable names and values
   vpc_id = module.vpc.vpc_id
   ingress_rules = var.sg_ingress_rules
   sg_tags       = var.sg_tags
@@ -125,7 +112,7 @@ module "SG" {
 module "master_vm" {
   source = "./modules/ec2"
 
-  # Example variables, replace with your actual variable names and values
+  # Example variables, replace with your actual variable names and values ..
 instance_type        = var.m_instance_type
   count               = var.m_node_count
   region              = var.region

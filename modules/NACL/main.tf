@@ -7,7 +7,7 @@ resource "aws_network_acl" "nacl" {
       to_port          = ingress.value.to_port
       protocol         = ingress.value.protocol
       cidr_block       = ingress.value.cidr_block # Corrected to singular cidr_block
-      # ipv6_cidr_block  = ingress.value.ipv6_cidr_block
+      ipv6_cidr_block  = ingress.value.ipv6_cidr_block
       rule_no          = ingress.value.rule_no # Required for NACL
       action           = ingress.value.action # Required for NACL (allow/deny)
     }
@@ -20,7 +20,7 @@ resource "aws_network_acl" "nacl" {
       to_port          = egress.value.to_port
       protocol         = egress.value.protocol
       cidr_block       = egress.value.cidr_block # Corrected to singular cidr_block
-      # ipv6_cidr_block  = egress.value.ipv6_cidr_block
+      ipv6_cidr_block  = egress.value.ipv6_cidr_block
       rule_no          = egress.value.rule_no # Required for NACL
       action           = egress.value.action # Required for NACL
     }

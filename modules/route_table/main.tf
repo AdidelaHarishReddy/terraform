@@ -8,7 +8,6 @@ resource "aws_route_table" "public" {
       gateway_id = var.igw_id
     }
 
+    tags = var.routetable_name
   }
-
-  tags = var.routetable_name
 }
