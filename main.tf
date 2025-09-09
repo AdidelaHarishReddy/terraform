@@ -116,7 +116,7 @@ resource "aws_network_acl_association" "nacl_association" {
 module "SG" {
   source = "./modules/sg"
 
-  # Example variables, replace with your actual variable names and values
+  # Example variables, replace with your actual variable names and values..
   vpc_id = module.vpc.vpc_id
   ingress_rules = var.sg_ingress_rules
   sg_tags       = var.sg_tags
