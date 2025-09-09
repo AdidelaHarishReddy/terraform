@@ -17,7 +17,7 @@ variable "ingress_rules" {
       to_port          = 80
       protocol         = "tcp"
       cidr_block       = "0.0.0.0/0"
-      ipv6_cidr_block  = ""
+      ipv6_cidr_block  = "::/0"
       rule_no          = 100
       action           = "allow"
     },
@@ -27,7 +27,7 @@ variable "ingress_rules" {
       to_port          = 22
       protocol         = "tcp"
       cidr_block       = "192.168.1.0/24"
-      ipv6_cidr_block  = ""
+      ipv6_cidr_block  = "::/0"
       rule_no          = 200
       action           = "allow"
     }
@@ -51,7 +51,7 @@ variable "egress_rules" {
       to_port         = 0
       protocol        = "-1" # -1 means all protocols
       cidr_block      = "0.0.0.0/0"
-      ipv6_cidr_block = ""
+      ipv6_cidr_block = "::/0"
       rule_no         = 100
       action          = "allow"
     }

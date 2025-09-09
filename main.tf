@@ -93,12 +93,25 @@ module "nacl" {
   nacl_name     = "nacl_80_22_traffic"
 }
 
-# Associate the NACL with the provided subnets
+locals {
+  subnet_map = {
+    "pvt" = module.pvt_subnet.subnet_id
+    "pub" = module.pub_subnet.subnet_id
+  }
+}
+
 resource "aws_network_acl_association" "nacl_association" {
-  for_each       = toset([module.pvt_subnet.subnet_id, module.pub_subnet.subnet_id])
-  subnet_id      = each.value
+  for_each = local.subnet_map
+  subnet_id     = each.value
   network_acl_id = module.nacl.nacl_id
 }
+
+# # Associate the NACL with the provided subnets
+# resource "aws_network_acl_association" "nacl_association" {
+#   for_each       = toset([module.pvt_subnet.subnet_id, module.pub_subnet.subnet_id])
+#   subnet_id      = each.value
+#   network_acl_id = module.nacl.nacl_id
+# }
 
 module "SG" {
   source = "./modules/sg"

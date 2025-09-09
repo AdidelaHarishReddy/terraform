@@ -78,7 +78,7 @@ variable "vpc_name" {
 variable "pub_subnet_cidr" {
   description = "The CIDR block for the subnet"
   type        = string
-  default     = "10.0.2.0/24"
+  default     = "10.0.0.0/24"
 }
 
 variable "pvt_subnet_cidr" {
@@ -108,8 +108,8 @@ variable "ingress_rules" {
       from_port        = 22
       to_port          = 22
       protocol         = "tcp"
-      cidr_block       = "192.168.1.0/24"
-      rule_no          = 200
+      cidr_block       = "0.0.0.0/0"
+      rule_no          = 99
     }
   ]
 }
@@ -162,7 +162,7 @@ variable "sg_ingress_rules" {
       from_port        = 22
       to_port          = 22
       protocol         = "tcp"
-      cidr_blocks      = ["192.168.1.0/24"]
+      cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       security_groups  = []
       self             = false

@@ -7,13 +7,13 @@ variable "vpc_id" {
 variable "subnet_cidr" {
   description = "The CIDR block for the subnet"
   type        = string
-  default     = ""
+  default     = "10.0.0.0/24"
 }
 
 variable "igw_id" {
   description = "The ID of the internet gateway"
   type        = string
-  default     = ""
+  default     = null
 }
 
 variable "routetable_name" {
