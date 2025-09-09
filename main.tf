@@ -112,7 +112,7 @@ module "SG" {
 module "master_vm" {
   source = "./modules/ec2"
 
-  # Example variables, replace with your actual variable names and values ..
+  # Example variables, replace with your actual variable names and values ...
 instance_type        = var.m_instance_type
   count               = var.m_node_count
   region              = var.region
