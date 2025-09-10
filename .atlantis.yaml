@@ -46,4 +46,3 @@ workflows:
 allowed_regexp_prefixes:  # Allow dev and main branches
   - main
   - dev
-

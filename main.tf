@@ -34,7 +34,7 @@ module "IGW" {
 module "pub_route_table" {
   depends_on = [ module.vpc, module.IGW ]
   source = "./modules/route_table"  
-  # Example variables, replace with your actual variable names and values
+  # Example variables, replace with your actual variable names and values.
   vpc_id          = module.vpc.vpc_id
   subnet_cidr     = var.pub_subnet_cidr
   igw_id          = module.IGW.igw_id
@@ -124,7 +124,7 @@ resource "aws_network_acl_association" "nacl_association" {
 }
 
 module "SG" {
-  source = "./modules/sg"
+  source = "./modules/SG"
 
   # Example variables, replace with your actual variable names and values
   vpc_id = module.vpc.vpc_id
@@ -189,7 +189,7 @@ resource "null_resource" "master_provision" {
 module "worker_vm" {
   source = "./modules/ec2"
 
-  # Example variables, replace with your actual variable names and values
+  # Example variables, replace with your actual variable names and values.
 instance_type        = var.instance_type
   count               = var.node_count
   region              = var.region
