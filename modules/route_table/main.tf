@@ -7,7 +7,7 @@ resource "aws_route_table" "public" {
       cidr_block = "0.0.0.0/0"
       gateway_id = var.igw_id
     }
+  }
 
     tags = var.routetable_name
-  }
 }

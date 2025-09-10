@@ -58,3 +58,8 @@ variable "security_group_ids" {
     default     = []
 }
 
+variable "associate_public_ip_address" {
+    description = "Whether to associate a public IP address with the instance"
+    type        = bool
+    default     = false
+}

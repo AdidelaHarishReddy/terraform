@@ -30,7 +30,7 @@ variable "instance_type" {
 variable "m_instance_type" {
     description = "Instance type for the cluster nodes"
     type        = string
-    default     = "t3.micro"
+    default     = "t3.small"
 }
 
 variable "vpc_id" {
@@ -90,27 +90,79 @@ variable "pvt_subnet_cidr" {
 variable "ingress_rules" {
   description = "List of ingress rules for the NACL"
   type = list(object({
+    description      = string
     from_port        = number
     to_port          = number
     protocol         = string
     cidr_block       = string
     rule_no          = number
+    action           = string
   }))
   default = [
     {
+      description      = "Allow HTTP traffic"
       from_port        = 80
       to_port          = 80
       protocol         = "tcp"
       cidr_block       = "0.0.0.0/0"
-      rule_no          = 100
+      rule_no          = 90
+      action           = "allow"
     },
     {
+      description      = "Allow SSH traffic"
       from_port        = 22
       to_port          = 22
       protocol         = "tcp"
       cidr_block       = "0.0.0.0/0"
-      rule_no          = 99
+      rule_no          = 91
+      action           = "allow"
+    },
+    {
+      description      = "Allow HTTPS traffic"
+      from_port        = 443
+      to_port          = 443
+      protocol         = "tcp"
+      cidr_block       = "0.0.0.0/0"
+      action           = "allow"
+      rule_no          = 92
+    },
+    {
+      description      = "Allow BGP(used by calico) traffic"
+      from_port        = 179
+      to_port          = 179
+      protocol         = "tcp"
+      cidr_block       = "0.0.0.0/0"
+      action           = "allow"
+      rule_no          = 93
+    },
+    { 
+      description      = "Allow coredns traffic"
+      from_port        = 53
+      to_port          = 53
+      protocol         = "udp"
+      cidr_block       = "0.0.0.0/0"
+      action           = "allow"
+      rule_no          = 94
+    },
+    {
+      description      = "Allow all main traffic"
+      from_port        = 1024
+      to_port          = 65535
+      protocol         = "tcp"
+      cidr_block       = "0.0.0.0/0"
+      action           = "allow"
+      rule_no          = 95
+    },
+    {
+      description      = "Allow icmp traffic"
+      from_port        = 0
+      to_port          = 0
+      protocol         = "icmp"
+      cidr_block       = "0.0.0.0/0"
+      action           = "allow"
+      rule_no          = 96
     }
+
   ]
 }
 
@@ -122,6 +174,7 @@ variable "egress_rules" {
     protocol        = string
     cidr_block      = string
     rule_no         = number
+    action          = string
   }))
   default = [
     {
@@ -130,6 +183,7 @@ variable "egress_rules" {
       protocol        = "-1" # -1 means all protocols
       cidr_block      = "0.0.0.0/0"
       rule_no         = 100
+      action          = "allow"
     }
   ]
 }
@@ -162,6 +216,46 @@ variable "sg_ingress_rules" {
       from_port        = 22
       to_port          = 22
       protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow HTTP traffic"
+      from_port        = 1024
+      to_port          = 65535
+      protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow HTTP traffic"
+      from_port        = 53
+      to_port          = 53
+      protocol         = "udp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow HTTP traffic"
+      from_port        = 179
+      to_port          = 179
+      protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow HTTP traffic"
+      from_port        = -1
+      to_port          = -1
+      protocol         = "icmp"
       cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       security_groups  = []
