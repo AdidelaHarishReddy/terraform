@@ -3,50 +3,52 @@ automerge: true # Available since v0.15.0
 autodiscover: # Available since v0.18.0
   mode: auto
   ignore_paths:
-  - some/path
-delete_source_branch_on_merge: true # Available since v0.15.0
+    - ./join_command.sh
+    - ./README.md
+# delete_source_branch_on_merge: true # Available since v0.15.0
 parallel_plan: true # Available since v0.17.0
 parallel_apply: true # Available since v0.17.0
 abort_on_execution_order_fail: true # Available since v0.17.0
 projects:
-- name: my-project-name # Available since v0.1.0
+- name: my-project # Available since v0.1.0
   branch: /main/ # Available since v0.20.0
   dir: . # Available since v0.1.0
   workspace: default # Available since v0.1.0
   terraform_distribution: terraform # Available since v0.25.0
-  terraform_version: v0.11.0 # Available since v0.1.0
-  delete_source_branch_on_merge: true # Available since v0.17.0
-  repo_locking: true # deprecated: use repo_locks instead, Available since v0.17.0
+  terraform_version: v1.12.2 # Available since v0.1.0
+  # delete_source_branch_on_merge: true # Available since v0.17.0
+  # repo_locking: true # deprecated: use repo_locks instead, Available since v0.17.0
   repo_locks: # Available since v0.17.0
     mode: on_plan
   custom_policy_check: false # Available since v0.17.0
   autoplan: # Available since v0.1.0
     when_modified: ["*.tf", "../modules/**/*.tf", ".terraform.lock.hcl"]
     enabled: true
-  plan_requirements: [mergeable, approved, undiverged] # Available since v0.17.0
+  plan_requirements: [mergeable, approved] # Available since v0.17.0
   apply_requirements: [mergeable, approved, undiverged] # Available since v0.17.0
   import_requirements: [mergeable, approved, undiverged] # Available since v0.17.0
   silence_pr_comments: ["apply"] # Available since v0.17.0
   execution_order_group: 1 # Available since v0.17.0
   depends_on: # Available since v0.20.0
-    - project-1
+    # - project-1
   workflow: myworkflow # Available since v0.17.0
 workflows: # Available since v0.1.0
   myworkflow:
     plan:
       steps:
-      - run: my-custom-command arg1 arg2
-      - run:
-          command: my-custom-command arg1 arg2
-          output: hide
+      # - run: my-custom-command arg1 arg2
+      # - run:
+          # command: my-custom-command arg1 arg2
+          # output: hide
       - init
       - plan:
           extra_args: ["-lock", "false"]
-      - run: my-custom-command arg1 arg2
+      # - run: my-custom-command arg1 arg2
     apply:
       steps:
-      - run: echo hi
+      - run: echo "starting apply"
       - apply
 allowed_regexp_prefixes: # Available since v0.19.0
-- dev/
-- staging/
+- main
+# - dev/
+# - staging/
