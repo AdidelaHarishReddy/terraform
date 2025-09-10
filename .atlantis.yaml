@@ -1,0 +1,48 @@
+version: 3
+automerge: true
+
+autodiscover:
+  mode: auto
+  ignore_paths:
+    - ./join_command.sh
+    - ./README.md
+
+parallel_plan: true
+parallel_apply: true
+abort_on_execution_order_fail: true
+
+projects:
+  - name: my-project
+    branch: main  #  Correct syntax
+    dir: .
+    workspace: default
+    terraform_distribution: terraform
+    terraform_version: v1.5.7  # Recommended newer version
+    repo_locks:
+      mode: on_plan
+    custom_policy_check: false
+    autoplan:
+      when_modified: ["*.tf", "../modules/**/*.tf", ".terraform.lock.hcl"]
+      enabled: true
+    plan_requirements: []  # No approval needed for plan
+    apply_requirements: [mergeable]  # Approval needed for apply
+    import_requirements: [mergeable, approved, undiverged]
+    silence_pr_comments: ["apply"]
+    execution_order_group: 1
+    workflow: myworkflow
+
+workflows:
+  myworkflow:
+    plan:
+      steps:
+        - init
+        - plan:
+            extra_args: ["-lock", "false"]
+    apply:
+      steps:
+        - run: echo "starting apply"
+        - apply
+
+allowed_regexp_prefixes:  # Allow dev and main branches
+  - main
+  - dev
