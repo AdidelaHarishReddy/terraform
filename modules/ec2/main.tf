@@ -5,6 +5,7 @@ resource "aws_instance" "this" {
   key_name      = var.key_name
   count         = var.node_count
   vpc_security_group_ids = var.security_group_ids
+  associate_public_ip_address = var.associate_public_ip_address
   tags          = var.tags
 }
 
