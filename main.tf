@@ -34,7 +34,7 @@ module "IGW" {
 module "pub_route_table" {
   depends_on = [ module.vpc, module.IGW ]
   source = "./modules/route_table"  
-  # Example variables, replace with your actual variable names and values
+  # Example variables, replace with your actual variable names and values.
   vpc_id          = module.vpc.vpc_id
   subnet_cidr     = var.pub_subnet_cidr
   igw_id          = module.IGW.igw_id
