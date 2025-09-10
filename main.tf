@@ -189,7 +189,7 @@ resource "null_resource" "master_provision" {
 module "worker_vm" {
   source = "./modules/ec2"
 
-  # Example variables, replace with your actual variable names and values
+  # Example variables, replace with your actual variable names and values.
 instance_type        = var.instance_type
   count               = var.node_count
   region              = var.region
