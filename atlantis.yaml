@@ -24,8 +24,8 @@ projects:
   autoplan: # Available since v0.1.0
     when_modified: ["*.tf", "../modules/**/*.tf", ".terraform.lock.hcl"]
     enabled: true
-  plan_requirements: [mergeable, approved] # Available since v0.17.0
-  apply_requirements: [mergeable, approved, undiverged] # Available since v0.17.0
+  plan_requirements: [] # Available since v0.17.0
+  apply_requirements: [mergeable, approved] # Available since v0.17.0
   import_requirements: [mergeable, approved, undiverged] # Available since v0.17.0
   silence_pr_comments: ["apply"] # Available since v0.17.0
   execution_order_group: 1 # Available since v0.17.0
@@ -50,5 +50,5 @@ workflows: # Available since v0.1.0
       - apply
 allowed_regexp_prefixes: # Available since v0.19.0
 - main
-# - dev/
+- dev
 # - staging/
