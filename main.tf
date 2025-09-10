@@ -124,7 +124,7 @@ resource "aws_network_acl_association" "nacl_association" {
 }
 
 module "SG" {
-  source = "./modules/sg"
+  source = "./modules/SG"
 
   # Example variables, replace with your actual variable names and values
   vpc_id = module.vpc.vpc_id
