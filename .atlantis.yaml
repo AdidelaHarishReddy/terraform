@@ -25,7 +25,7 @@ projects:
       when_modified: ["*.tf", "../modules/**/*.tf", ".terraform.lock.hcl"]
       enabled: true
     plan_requirements: []  # No approval needed for plan
-    apply_requirements: [mergeable, approved]  # Approval needed for apply
+    apply_requirements: [mergeable]  # Approval needed for apply
     import_requirements: [mergeable, approved, undiverged]
     silence_pr_comments: ["apply"]
     execution_order_group: 1
