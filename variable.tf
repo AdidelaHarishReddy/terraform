@@ -298,3 +298,15 @@ variable "sg_tags" {
     Environment = "default"
   }
 } 
+
+variable "aws_access_key_id" {
+  description = "The CIDR block for the private subnet"
+  type        = string
+  default     = ""
+}
+
+variable "aws_secret_access_key" {
+  description = "The CIDR block for the private subnet"
+  type        = string
+  default     = ""
+}
