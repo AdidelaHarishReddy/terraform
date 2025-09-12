@@ -311,8 +311,8 @@ variable "aws_secret_access_key" {
   default     = ""
 }
 
-variable "region" {
-  description = "The CIDR block for the private subnet"
-  type        = string
-  default     = ""
-}
+# variable "region" {
+#   description = "The CIDR block for the private subnet"
+#   type        = string
+#   default     = ""
+# }
