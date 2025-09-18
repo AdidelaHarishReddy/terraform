@@ -152,39 +152,39 @@ instance_type        = var.m_instance_type
   # Add other variables as required by your ec2 module
 }
 
-# resource "null_resource" "master_provision" {
-#   triggers = {
-#     run_at = "only-once"
-#   }
-#   count = var.m_node_count
+resource "null_resource" "master_provision" {
+  triggers = {
+    run_at = "only-once"
+  }
+  count = var.m_node_count
 
-#   # triggers = {
-#   #   always_run = timestamp()
-#   # }
+  # triggers = {
+  #   always_run = timestamp()
+  # }
 
-#   connection {
-#     type        = "ssh"
-#     user        = "ubuntu"
-#     private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
-#     host        = module.master_vm[count.index].public_ips[0]
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
+    host        = module.master_vm[count.index].public_ips[0]
 
-#   }
+  }
 
-#   provisioner "remote-exec" {
-#     inline = [
-#       "set -e",
-#       "sudo apt update || echo \"apt update failed\"",
-#       "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s master | tee -a /home/ubuntu/master-log.txt || echo \"Failed to run master setup script\"",
-#       "sleep 10",
-#       "sudo kubeadm token create --print-join-command > /home/ubuntu/join_command.sh || echo \"Failed to create join command\"",
-#       "cat /home/ubuntu/join_command.sh | tee -a /home/ubuntu/log.txt"
+  provisioner "remote-exec" {
+    inline = [
+      "set -e",
+      "sudo apt update || echo \"apt update failed\"",
+      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s master | tee -a /home/ubuntu/master-log.txt || echo \"Failed to run master setup script\"",
+      "sleep 10",
+      "sudo kubeadm token create --print-join-command > /home/ubuntu/join_command.sh || echo \"Failed to create join command\"",
+      "cat /home/ubuntu/join_command.sh | tee -a /home/ubuntu/log.txt"
 
-#     ]
-#   }
-#   provisioner "local-exec" {
-#     command = "scp -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.master_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh ./join_command.sh"
-# }
-# }
+    ]
+  }
+  provisioner "local-exec" {
+    command = "scp -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.master_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh ./join_command.sh"
+  }
+}
 
 module "worker_vm" {
   source = "./modules/ec2"
@@ -203,35 +203,61 @@ instance_type        = var.instance_type
 
 }
 
-# resource "null_resource" "worker_provision" {
-#   triggers = {
-#     run_at = "only-once"
-#   }
-#   depends_on = [ null_resource.master_provision, module.worker_vm ]
-#   count = var.node_count
+resource "null_resource" "worker_provision" {
+  triggers = {
+    run_at = "only-once"
+  }
+  depends_on = [ null_resource.master_provision, module.worker_vm ]
+  count = var.node_count
 
-#   connection {
-#     type        = "ssh"
-#     user        = "ubuntu"
-#     private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
-#     host        = module.worker_vm[count.index].public_ips[0]
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
+    host        = module.worker_vm[count.index].public_ips[0]
+  }
+#   provisioner "local-exec" {
+#     command = "sleep 30 ; scp ./join_command.sh -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
 #   }
-# #   provisioner "local-exec" {
-# #     command = "sleep 30 ; scp ./join_command.sh -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
-# #   }
 
-# provisioner "file" {
-#   source      = "./join_command.sh"
-#   destination = "/home/ubuntu/join_command.sh"
-# }
+provisioner "file" {
+  source      = "./join_command.sh"
+  destination = "/home/ubuntu/join_command.sh"
+}
 
-#   provisioner "remote-exec" {
-#     inline = [
-#       "sudo apt update",
-#       "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s worker",
-#       "sudo chmod +x /home/ubuntu/join_command.sh",
-#       "sudo bash /home/ubuntu/join_command.sh"
-#     ]
-#   }
-# }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt update",
+      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s worker",
+      "sudo chmod +x /home/ubuntu/join_command.sh",
+      "sudo bash /home/ubuntu/join_command.sh"
+    ]
+  }
+}
+
+resource "null_resource" "master_provision_2" {
+  depends_on = [ null_resource.worker_provision ]
+  triggers = {
+    run_at = "only-once"
+  }
+  count = var.m_node_count
+
+  # triggers = {
+  #   always_run = timestamp()
+  # }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
+    host        = module.master_vm[count.index].public_ips[0]
+
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/argocd | bash"
+    ]
+  }
+}  
 
