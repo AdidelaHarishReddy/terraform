@@ -158,7 +158,7 @@ resource "null_resource" "master_provision" {
   }
   count = var.m_node_count
 
-  # triggers = {
+  # #triggers = {
   #   always_run = timestamp()
   # }
 
