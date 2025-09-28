@@ -154,6 +154,15 @@ variable "ingress_rules" {
       rule_no          = 95
     },
     {
+      description      = "Allow all main traffic"
+      from_port        = 1024
+      to_port          = 65535
+      protocol         = "udp"
+      cidr_block       = "0.0.0.0/0"
+      action           = "allow"
+      rule_no          = 97
+    },
+    {
       description      = "Allow icmp traffic"
       from_port        = 0
       to_port          = 0
@@ -226,6 +235,16 @@ variable "sg_ingress_rules" {
       from_port        = 1024
       to_port          = 65535
       protocol         = "tcp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow HTTP traffic"
+      from_port        = 1024
+      to_port          = 65535
+      protocol         = "udp"
       cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       security_groups  = []
