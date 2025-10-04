@@ -63,3 +63,15 @@ variable "associate_public_ip_address" {
     type        = bool
     default     = false
 }
+
+variable "root_volume_size" {
+    description = "Root EBS volume size in GB for the EC2 instance"
+    type        = number
+    default     = 8
+}
+
+# variable "ebs_volume_id" {
+#     description = "ebs adding volume value"  
+#     type        = string
+#     default     = "aws_ebs_volume.ebs_10gb.id"
+# }

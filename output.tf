@@ -12,7 +12,9 @@ output "public_ips" {
 }
 output "worker_public_ips" {
   description = "The public IP addresses of the worker EC2 instances"
-  value       = module.worker_vm[*].public_ips
+  # value       = module.worker_vm[*].public_ips
+  # value       = module.worker_vm.public_ips
+  value = [for vm in module.worker_vm : vm.public_ips]
 }
 
 output "nacl_id" {

@@ -200,6 +200,7 @@ instance_type        = var.instance_type
   associate_public_ip_address = true
   tags                = var.tags
   ami                  = "ami-0f918f7e67a3323f0"  # Add other variables as required by your ec2 module
+  root_volume_size     = 10
 
 }
 
@@ -208,12 +209,15 @@ resource "null_resource" "worker_provision" {
     run_at = "only-once"
   }
   depends_on = [ null_resource.master_provision, module.worker_vm ]
-  count = var.node_count
+  # for_each = toset(module.worker_vm.public_ips)
+  # count = var.node_count
+  count = length(module.worker_vm)
 
   connection {
     type        = "ssh"
     user        = "ubuntu"
     private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
+    # host        = each.value
     host        = module.worker_vm[count.index].public_ips[0]
   }
 #   provisioner "local-exec" {
