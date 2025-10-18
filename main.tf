@@ -200,7 +200,7 @@ instance_type        = var.instance_type
   associate_public_ip_address = true
   tags                = var.tags
   ami                  = "ami-0f918f7e67a3323f0"  # Add other variables as required by your ec2 module
-  root_volume_size     = 10
+  root_volume_size     = 20
 
 }
 
@@ -234,6 +234,7 @@ provisioner "file" {
       "sudo apt update",
       "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s worker",
       "sudo chmod +x /home/ubuntu/join_command.sh",
+      "sleep 20",
       "sudo bash /home/ubuntu/join_command.sh"
     ]
   }
