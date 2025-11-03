@@ -71,32 +71,37 @@ module "pvt_route_table" {
 module "pub_subnet" {
   depends_on = [ module.pub_route_table, module.nacl ]
   source = "./modules/subnet"
+  count = 2
   # Example variables, replace with your actual variable names and values
   vpc_id                  = module.vpc.vpc_id # Reference to your existing VPC
   # nacl_id                 = module.nacl.nacl_id
-  subnet_cidr             = var.pub_subnet_cidr
-  subnet_name             = "public-subnet-1"
+  subnet_cidr             = count.index == 0 ? "10.0.0.0/24" : "10.0.2.0/24"
+  subnet_name             = count.index == 0 ? "public-subnet-1a" : "public-subnet-1b"
+  availability_zone       = count.index == 0 ? "ap-south-1a" : "ap-south-1b"
   map_public_ip_on_launch = true
 }
 
 module "pvt_subnet" {
   depends_on = [ module.pub_route_table, module.nacl ]
   source = "./modules/subnet"
-
+  count = 2
   # Example variables, replace with your actual variable names and values
   vpc_id                  = module.vpc.vpc_id # Reference to your existing VPC
-  subnet_cidr             = var.pvt_subnet_cidr
-  subnet_name             = "private-subnet-1"
+  subnet_cidr             = count.index == 0 ? "10.0.1.0/24" : "10.0.3.0/24"
+  subnet_name             = count.index == 0 ? "private-subnet-1a" : "private-subnet-1b"
+  availability_zone       = count.index == 0 ? "ap-south-1a" : "ap-south-1b"
   map_public_ip_on_launch = false
 }
 
 resource "aws_route_table_association" "pub_association" {
-  subnet_id      = module.pub_subnet.subnet_id
+  count          = length(module.pub_subnet)
+  subnet_id      = module.pub_subnet[count.index].subnet_id
   route_table_id = module.pub_route_table.route_table_id
 } 
 
 resource "aws_route_table_association" "pvt_association" {
-  subnet_id      = module.pvt_subnet.subnet_id
+  count          = length(module.pvt_subnet)
+  subnet_id      = module.pvt_subnet[count.index].subnet_id
   route_table_id = module.pvt_route_table.route_table_id
 } 
 
@@ -109,10 +114,14 @@ module "nacl" {
 }
 
 locals {
-  subnet_map = {
-    "pvt" = module.pvt_subnet.subnet_id
-    "pub" = module.pub_subnet.subnet_id
-  }
+  subnet_map = merge(
+    {
+      for i, subnet in module.pvt_subnet : "pvt-${i}" => subnet.subnet_id
+    },
+    {
+      for i, subnet in module.pub_subnet : "pub-${i}" => subnet.subnet_id
+    }
+  )
 }
 
 
@@ -141,7 +150,7 @@ instance_type        = var.m_instance_type
   region             = var.region
   key_name           = var.key_name
   vpc_id             = module.vpc.vpc_id        # Uncomment if using VPC ID
-  subnet_ids         = [module.pub_subnet.subnet_id]    # Uncomment if using subnet IDs
+  subnet_ids         = [module.pub_subnet[0].subnet_id]    # Uncomment if using subnet IDs
   security_group_ids = [module.SG.sg_id]
   tags               = var.m_tags
   ami                = "ami-0f918f7e67a3323f0"  # Add other variables as required by your ec2 module
@@ -175,7 +184,7 @@ resource "null_resource" "master_provision" {
       "set -e",
       "sudo apt update || echo \"apt update failed\"",
       "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s master | tee -a /home/ubuntu/master-log.txt || echo \"Failed to run master setup script\"",
-      "sleep 10",
+      "sleep 20",
       "sudo kubeadm token create --print-join-command > /home/ubuntu/join_command.sh || echo \"Failed to create join command\"",
       "cat /home/ubuntu/join_command.sh | tee -a /home/ubuntu/log.txt"
 
@@ -195,7 +204,7 @@ instance_type        = var.instance_type
   region              = var.region
   key_name             = var.key_name
   vpc_id             = module.vpc.vpc_id        # Uncomment if using VPC ID
-  subnet_ids         = [module.pub_subnet.subnet_id]      # Uncomment if using subnet IDs
+  subnet_ids         = [module.pub_subnet[0].subnet_id]      # Uncomment if using subnet IDs
   security_group_ids = [module.SG.sg_id]
   associate_public_ip_address = true
   tags                = var.tags
@@ -233,8 +242,10 @@ provisioner "file" {
     inline = [
       "sudo apt update",
       "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/k8s_master_worker_new | bash -s worker",
+      "echo \"Exit code for install script: $?\"",
+      "sleep 10",
       "sudo chmod +x /home/ubuntu/join_command.sh",
-      "sleep 20",
+      "sleep 10",
       "sudo bash /home/ubuntu/join_command.sh"
     ]
   }

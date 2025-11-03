@@ -21,3 +21,9 @@ variable "subnet_name" {
   type        = string
   default     = "subnet"
 }
+
+variable "availability_zone" {
+  description = "The availability zone for the subnet"
+  type        = string
+  default     = "ap-south-1a"
+}
