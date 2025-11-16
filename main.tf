@@ -1,22 +1,22 @@
-resource "aws_s3_bucket" "bucket" {
-  bucket = "my-unique-bucket-name-harish-terraform1212"
-}
-resource "aws_s3_bucket_versioning" "bucket_versioning" {
-  bucket = aws_s3_bucket.bucket.id
+# resource "aws_s3_bucket" "bucket" {
+#   bucket = "my-unique-bucket-name-harish-terraform1212"
+# }
+# resource "aws_s3_bucket_versioning" "bucket_versioning" {
+#   bucket = aws_s3_bucket.bucket.id
 
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
-  bucket = aws_s3_bucket.bucket.id
+#   versioning_configuration {
+#     status = "Enabled"
+#   }
+# }
+# resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
+#   bucket = aws_s3_bucket.bucket.id
 
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
-    }
-  }
-}
+#   rule {
+#     apply_server_side_encryption_by_default {
+#       sse_algorithm = "AES256"
+#     }
+#   }
+# }
 
 module "vpc" {
   source = "./modules/vpc"
@@ -267,13 +267,12 @@ resource "null_resource" "master_provision_2" {
     user        = "ubuntu"
     private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
     host        = module.master_vm[count.index].public_ips[0]
-
   }
 
   provisioner "remote-exec" {
     inline = [
       "curl -s https://raw.githubusercontent.com/AdidelaHarishReddy/installations/refs/heads/main/argocd | bash"
-    ]
-  }
+     ]
+   }
 }  
 
