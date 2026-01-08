@@ -68,28 +68,32 @@ module "pvt_route_table" {
 #   vpc_id = module.vpc.vpc_id
 # }
 
+data "aws_availability_zones" "available" {
+  state = "available"
+}
+
 module "pub_subnet" {
   depends_on = [ module.pub_route_table, module.nacl ]
   source = "./modules/subnet"
-  count = 2
+  count = length(data.aws_availability_zones.available.names)
   # Example variables, replace with your actual variable names and values
   vpc_id                  = module.vpc.vpc_id # Reference to your existing VPC
   # nacl_id                 = module.nacl.nacl_id
-  subnet_cidr             = count.index == 0 ? "10.0.0.0/24" : "10.0.2.0/24"
-  subnet_name             = count.index == 0 ? "public-subnet-1a" : "public-subnet-1b"
-  availability_zone       = count.index == 0 ? "ap-south-1a" : "ap-south-1b"
+  subnet_cidr = cidrsubnet(var.cidr_block, 5, count.index + 1)
+  subnet_name             = "public-subnet-${count.index + 1}"
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = true
 }
 
 module "pvt_subnet" {
   depends_on = [ module.pub_route_table, module.nacl ]
   source = "./modules/subnet"
-  count = 2
+  count = length(data.aws_availability_zones.available.names)
   # Example variables, replace with your actual variable names and values
   vpc_id                  = module.vpc.vpc_id # Reference to your existing VPC
-  subnet_cidr             = count.index == 0 ? "10.0.1.0/24" : "10.0.3.0/24"
-  subnet_name             = count.index == 0 ? "private-subnet-1a" : "private-subnet-1b"
-  availability_zone       = count.index == 0 ? "ap-south-1a" : "ap-south-1b"
+  subnet_cidr             = cidrsubnet(var.cidr_block, 5, count.index + 10)
+  subnet_name             = "private-subnet-${count.index + 1}"
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
   map_public_ip_on_launch = false
 }
 
@@ -204,7 +208,7 @@ instance_type        = var.instance_type
   region              = var.region
   key_name             = var.key_name
   vpc_id             = module.vpc.vpc_id        # Uncomment if using VPC ID
-  subnet_ids         = [module.pub_subnet[0].subnet_id]      # Uncomment if using subnet IDs
+  subnet_ids         = [module.pub_subnet[count.index%length(module.pub_subnet)].subnet_id]      # "%" modulo operator for round robin allocation of subnets  
   security_group_ids = [module.SG.sg_id]
   associate_public_ip_address = true
   tags                = var.tags
