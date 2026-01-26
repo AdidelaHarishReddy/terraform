@@ -1,22 +1,31 @@
-# resource "aws_s3_bucket" "bucket" {
-#   bucket = "my-unique-bucket-name-harish-terraform1212"
-# }
-# resource "aws_s3_bucket_versioning" "bucket_versioning" {
-#   bucket = aws_s3_bucket.bucket.id
+locals {
+  create_s3 = var.create_s3 ? 1 : 0
+}
+resource "aws_s3_bucket" "bucket" {
+  count = local.create_s3
+  lifecycle {
+    prevent_destroy = true
+  }
+  bucket = "my-unique-bucket-name-harish-terraform1213"
+}
+resource "aws_s3_bucket_versioning" "bucket_versioning" {
+  count = local.create_s3
+  bucket = aws_s3_bucket.bucket[count.index].id
 
-#   versioning_configuration {
-#     status = "Enabled"
-#   }
-# }
-# resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
-#   bucket = aws_s3_bucket.bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
+  count = local.create_s3
+  bucket = aws_s3_bucket.bucket[count.index].id
 
-#   rule {
-#     apply_server_side_encryption_by_default {
-#       sse_algorithm = "AES256"
-#     }
-#   }
-# }
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
 
 module "vpc" {
   source = "./modules/vpc"
@@ -178,7 +187,7 @@ resource "null_resource" "master_provision" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
+    private_key = file("C:/Users/anand/Downloads/vijay1.pem")
     host        = module.master_vm[count.index].public_ips[0]
 
   }
@@ -195,7 +204,7 @@ resource "null_resource" "master_provision" {
     ]
   }
   provisioner "local-exec" {
-    command = "scp -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.master_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh ./join_command.sh"
+    command = "scp -i C:/Users/anand/Downloads/vijay1.pem -o StrictHostKeyChecking=no ubuntu@${module.master_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh ./join_command.sh"
   }
 }
 
@@ -229,12 +238,12 @@ resource "null_resource" "worker_provision" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
+    private_key = file("C:/Users/anand/Downloads/vijay1.pem")
     # host        = each.value
     host        = module.worker_vm[count.index].public_ips[0]
   }
 #   provisioner "local-exec" {
-#     command = "sleep 30 ; scp ./join_command.sh -i C:/Users/anand/Downloads/mahesh1.pem -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
+#     command = "sleep 30 ; scp ./join_command.sh -i C:/Users/anand/Downloads/vijay1.pem -o StrictHostKeyChecking=no ubuntu@${module.worker_vm[count.index].public_ips[0]}:/home/ubuntu/join_command.sh "
 #   }
 
 provisioner "file" {
@@ -269,7 +278,7 @@ resource "null_resource" "master_provision_2" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = file("C:/Users/anand/Downloads/mahesh1.pem")
+    private_key = file("C:/Users/anand/Downloads/vijay1.pem")
     host        = module.master_vm[count.index].public_ips[0]
   }
 

@@ -3,6 +3,12 @@
 #     type        = string
 # }
 
+variable "create_s3" {
+    description = "Whether to create the S3 bucket"
+    type        = bool
+    default     = false
+}
+
 variable "region" {
     description = "The region where the resources will be created"
     type        = string
@@ -60,7 +66,7 @@ variable "m_tags" {
 variable "key_name" {
     description = "The name of the key pair to use for the EC2 instances"
     type        = string
-    default     = "mahesh1"
+    default     = "vijay1"
 }
 
 variable "cidr_block" {

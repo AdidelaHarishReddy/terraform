@@ -10,7 +10,7 @@ terraform {
 
 terraform {
   backend "s3" {
-        bucket       = "my-unique-bucket-name-harish-terraform1212"  
+        bucket       = "my-unique-bucket-name-harish-terraform1213"  
         key          = "main/terraform.tfstate"  
         region       = "ap-south-1"  
         encrypt      = true  
