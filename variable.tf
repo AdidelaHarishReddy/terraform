@@ -176,8 +176,16 @@ variable "ingress_rules" {
       cidr_block       = "0.0.0.0/0"
       action           = "allow"
       rule_no          = 96
+    },
+    {
+      description      = "Allow all traffic"
+      from_port        = 0
+      to_port          = 0
+      protocol         = "-1"
+      cidr_block       = "0.0.0.0/0"
+      action           = "allow"
+      rule_no          = 97
     }
-
   ]
 }
 
@@ -281,6 +289,16 @@ variable "sg_ingress_rules" {
       from_port        = -1
       to_port          = -1
       protocol         = "icmp"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = []
+      security_groups  = []
+      self             = false
+    },
+    {
+      description      = "Allow all traffic"
+      from_port        = -1
+      to_port          = -1
+      protocol         = "-1"
       cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       security_groups  = []
