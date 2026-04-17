@@ -1,1 +1,1 @@
-kubeadm join 10.0.10.77:6443 --token in6k27.1cucq19t5mt5rxeq --discovery-token-ca-cert-hash sha256:24c267f309d028a4b729430675609d4a59cbffb5604a6f545ae4f502c887cc38 
+kubeadm join 10.0.12.31:6443 --token wwp0yg.fx5pxqhu006j0f5w --discovery-token-ca-cert-hash sha256:a8beb6381e0f743dfb65e553fba23f33ae4a64463921908ea9bb7bb7bdab4f64 

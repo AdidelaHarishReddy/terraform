@@ -111,7 +111,7 @@ variable "ingress_rules" {
       to_port          = 80
       protocol         = "tcp"
       cidr_block       = "0.0.0.0/0"
-      rule_no          = 90
+      rule_no          = 98
       action           = "allow"
     },
     {
@@ -184,7 +184,7 @@ variable "ingress_rules" {
       protocol         = "-1"
       cidr_block       = "0.0.0.0/0"
       action           = "allow"
-      rule_no          = 97
+      rule_no          = 90
     }
   ]
 }
@@ -296,8 +296,8 @@ variable "sg_ingress_rules" {
     },
     {
       description      = "Allow all traffic"
-      from_port        = -1
-      to_port          = -1
+      from_port        = 0
+      to_port          = 0
       protocol         = "-1"
       cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
